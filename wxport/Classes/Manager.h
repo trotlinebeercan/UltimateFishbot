@@ -16,6 +16,7 @@
 #define __ULTIMATEFISHBOT_MANAGER_H__
 
 #include "Helpers/Global.h"
+#include "Helpers/Timer.h"
 
 namespace UF
 {
@@ -54,6 +55,8 @@ namespace UF
 
     private:
         void updateStats(UF::FishingState new_state);
+
+        void initializeTimer(UF::Timer &timer, std::function<void()> handle);
         void switchTimerState(bool enabled);
         void resetTimers();
 
@@ -71,15 +74,13 @@ namespace UF
         void antiAFKTimerTick();
 
     private:
-        /*
-        Timer m_nextActionTimer;
-        Timer m_lureTimer;
-        Timer m_hearthStoneTimer;
-        Timer m_raftTimer;
-        Timer m_charmTimer;
-        Timer m_baitTimer;
-        Timer m_antiAFKTimer;
-        */
+        UF::Timer m_nextActionTimer;
+        UF::Timer m_lureTimer;
+        UF::Timer m_hearthStoneTimer;
+        UF::Timer m_raftTimer;
+        UF::Timer m_charmTimer;
+        UF::Timer m_baitTimer;
+        UF::Timer m_antiAFKTimer;
 
         int32_t m_fishWaitTime;
 

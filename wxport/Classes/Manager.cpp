@@ -32,16 +32,23 @@ UF::Manager::Manager()
     m_fishingStats.reset();
 
     // initialize timers
+    m_nextActionTimer.setHandler(std::bind(&UF::Manager::takeNextAction, this));
+    m_lureTimer.setHandler(std::bind(&UF::Manager::lureTimerTick, this));
+    m_hearthStoneTimer.setHandler(std::bind(&UF::Manager::hearthStoneTimerTick, this));
+    m_raftTimer.setHandler(std::bind(&UF::Manager::raftTimerTick, this));
+    m_charmTimer.setHandler(std::bind(&UF::Manager::charmTimerTick, this));
+    m_baitTimer.setHandler(std::bind(&UF::Manager::baitTimerTick, this));
+    m_antiAFKTimer.setHandler(std::bind(&UF::Manager::antiAFKTimerTick, this));
 
     resetTimers();
 }
 
 UF::Manager::~Manager()
 {
-    UF::Helpers::safeDelete(m_ears);
-    UF::Helpers::safeDelete(m_eyes);
-    UF::Helpers::safeDelete(m_hands);
-    UF::Helpers::safeDelete(m_legs);
+    UF::Memory::safeDelete(m_ears);
+    UF::Memory::safeDelete(m_eyes);
+    UF::Memory::safeDelete(m_hands);
+    UF::Memory::safeDelete(m_legs);
 }
 
 void
@@ -183,12 +190,45 @@ UF::Manager::updateStats(UF::FishingState new_state)
 void
 UF::Manager::switchTimerState(bool enabled)
 {
-    //
+    // TODO: Get these from parameters + user settings
+    const bool autoLure   = false;
+    const bool autoRaft   = false;
+    const bool autoCharm  = false;
+    const bool autoBait   = false;
+    const bool autoHearth = false;
+    const bool antiAfk    = false;
+
+    m_nextActionTimer.setEnabled(enabled);
+
+    m_lureTimer.setEnabled(autoLure && enabled);
+    m_raftTimer.setEnabled(autoRaft && enabled);
+    m_charmTimer.setEnabled(autoCharm && enabled);
+    m_baitTimer.setEnabled(autoBait && enabled);
+    m_hearthStoneTimer.setEnabled(autoHearth && enabled);
+    m_antiAFKTimer.setEnabled(antiAfk && enabled);
 }
 
 void
 UF::Manager::resetTimers()
 {
+    m_nextActionTimer.stop();
+    m_nextActionTimer.setInterval(kActionTimerLength);
+
+    // TODO: Get these from parameters + user settings
+    const int32_t lureTime = 10;
+    const int32_t hsTime = 15;
+    const int32_t raftTime = 8;
+    const int32_t charmTime = 60;
+    const int32_t baitTime = 5;
+    const int32_t afkTime = 15;
+
+    m_lureTimer.setInterval(lureTime * kMinute + 22 * kSecond);
+    m_hearthStoneTimer.setInterval(hsTime * kMinute);
+    m_raftTimer.setInterval(raftTime * kMinute);
+    m_charmTimer.setInterval(charmTime * kMinute);
+    m_baitTimer.setInterval(baitTime * kMinute);
+    m_antiAFKTimer.setInterval(afkTime * kMinute);
+
     m_fishWaitTime = 0;
 }
 
@@ -249,7 +289,7 @@ UF::Manager::handleNeededAction(UF::NeededAction action)
     {
         case UF::NeededAction::HearthStone:
         {
-            // stop fishing
+            // TODO: stop fishing
             m_hands->doAction(action);
         }
         case UF::NeededAction::Lure:

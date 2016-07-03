@@ -12,34 +12,21 @@
 // https://github.com/UltimateFishbot/UltimateFishbot
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __ULTIMATEFISHBOT_EARS_H__
-#define __ULTIMATEFISHBOT_EARS_H__
+#ifndef __ULTIMATEFISHBOT_OS_H__
+#define __ULTIMATEFISHBOT_OS_H__
 
 #include "Helpers/Global.h"
-#include "Helpers/Timer.h"
 
 namespace UF
 {
-    class Manager;
-
-    namespace BodyParts
+    namespace OS
     {
-        class Ears
-        {
-        public:
-            Ears(UF::Manager *manager);
-
-        private:
-            void listenTimerTick();
-            void listenTimerTickAverage();
-            int32_t getAverageVolume() const;
-
-        private:
-            UF::Manager *m_manager;
-            UF::Timer m_listenTimer;
-            std::list<int32_t> m_volumeQueue;
-        };
+        void moveMouse(int32_t x, int32_t y);
+        void sendKeyPress(uint8_t key);
+        void sendClick();
+        void activateWarcraft();
+        UF::Image8Bit getCursor();
     };
 };
 
-#endif // __ULTIMATEFISHBOT_EARS_H__
+#endif // __ULTIMATEFISHBOT_OS_H__

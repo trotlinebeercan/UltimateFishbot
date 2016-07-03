@@ -14,22 +14,55 @@
 
 #include "BodyParts/Eyes.h"
 
+#include "Helpers/OS.h"
 #include "Manager.h"
 
 UF::BodyParts::Eyes::Eyes::Eyes(UF::Manager *manager)
 {
     m_manager = manager;
+
+    // TODO: Load fishing cursor from file
 }
 
 void
 UF::BodyParts::Eyes::startLooking()
 {
-    /*
-    if (m_backgroundWorker->busy()) return;
-    */
+    if (m_running) return;
 
     m_manager->setActualState(UF::FishingState::SearchingForBobber);
-    // m_backgroundWorker->runWorkerAsync();
+
+    m_found   = false;
+    m_running = true;
+    m_backgroundWorker = std::thread(std::bind(&UF::BodyParts::Eyes::backgroundThreadRun, this));
+}
+
+void
+UF::BodyParts::Eyes::backgroundThreadRun()
+{
+    // TODO: Get window rect and use that over custom rect
+    // TODO: Get option to ^ from parameters + user settings
+
+    m_xPosMin = 40;
+    m_xPosMax = 400;
+    m_yPosMin = 40;
+    m_yPosMin = 400;
+
+    // TODO: Get option from parameters + user settings
+    //lookForBobberSpiral();
+    lookForBobber();
+    backgroundThreadComplete();
+}
+
+void
+UF::BodyParts::Eyes::backgroundThreadComplete()
+{
+    if (!m_found)
+    {
+        m_manager->setActualState(UF::FishingState::Idle);
+        return;
+    }
+
+    m_manager->setActualState(UF::FishingState::WaitingForFish);
 }
 
 void
@@ -50,6 +83,7 @@ UF::BodyParts::Eyes::lookForBobber()
             {
                 if (moveMouseAndCheckCursor(x, y))
                 {
+                    m_found = true;
                     return;
                 }
             }
@@ -57,12 +91,13 @@ UF::BodyParts::Eyes::lookForBobber()
     }
 
     // we didn't catch a fish! :(
+    m_found = false;
 }
 
 void
 UF::BodyParts::Eyes::lookForBobberSpiral()
 {
-    // TODO
+    // TODO: Implement
 }
 
 bool
@@ -74,21 +109,32 @@ UF::BodyParts::Eyes::moveMouseAndCheckCursor(int32_t x, int32_t y)
         return false;
     }
 
-    // UF::OS::moveMouse(x, y);
+    UF::OS::moveMouse(x, y);
 
-    // sleep(9001);
+    // TODO: check if we need to sleep here, or if sleep is ok in moveMouse
 
-    // UF::OS::getCursor();
+    UF::Image8Bit cursor = UF::OS::getCursor();
 
-    // if (!theCursorWeWant) return false;
-
-    // if (!imageCompare(currentCursor, fishingCursor)) return false;
+    if (!imageCompare(cursor, m_fishingCursor)) return false;
 
     return true;
 }
 
 bool
-UF::BodyParts::Eyes::imageCompare()
+UF::BodyParts::Eyes::imageCompare(UF::Image8Bit image0, UF::Image8Bit image1)
 {
+    if (image0.m_width != image1.m_width || image0.m_height != image0.m_height)
+    {
+        return false;
+    }
+
+    for (int32_t i = 0; i < image0.m_width; i++)
+    {
+        for (int32_t j = 0; j < image0.m_height; j++)
+        {
+            // TODO: Compare images (somehow)
+        }
+    }
+
     return true;
 }

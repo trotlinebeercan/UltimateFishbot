@@ -14,6 +14,8 @@
 
 #include "BodyParts/Hands.h"
 
+#include "Helpers/OS.h"
+
 UF::BodyParts::Hands::Hands::Hands()
 {
     m_baitIndex = 0;
@@ -39,15 +41,20 @@ UF::BodyParts::Hands::updateKeys()
 void
 UF::BodyParts::Hands::cast()
 {
-    // UF::OS::activateWarcraft();
-    // sleep(casting delay);
-    // UF::OS::sendKeyPress(FishKey);
+    UF::OS::activateWarcraft();
+
+    // TODO: Pull these from parameters + user settings
+    std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+    UF::OS::sendKeyPress('1');
 }
 
 void
 UF::BodyParts::Hands::loot()
 {
-    // UF::OS::sendClick();
+    UF::OS::sendClick();
+
+    // TODO: Pull this from parameters + user settings
+    std::this_thread::sleep_for(std::chrono::milliseconds(3000));
 }
 
 void
@@ -113,7 +120,7 @@ UF::BodyParts::Hands::doAction(UF::NeededAction action)
         }
     }
 
-    // UF::OS::activateWarcraft();
-    // UF::OS::sendKeyPress(actionKey);
-    // sleep(sleepTime * 1000);
+    UF::OS::activateWarcraft();
+    UF::OS::sendKeyPress(actionKey);
+    std::this_thread::sleep_for(std::chrono::milliseconds(sleepTime * 1000));
 }

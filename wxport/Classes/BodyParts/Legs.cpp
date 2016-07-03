@@ -14,6 +14,8 @@
 
 #include "BodyParts/Legs.h"
 
+#include "Helpers/OS.h"
+
 UF::BodyParts::Legs::Legs()
 {
     //
@@ -51,14 +53,13 @@ UF::BodyParts::Legs::movePath(std::vector<uint8_t> keys)
     for (uint8_t k : keys)
     {
         singleMove(k);
-        // sleep(250);
+        std::this_thread::sleep_for(std::chrono::milliseconds(250));
     }
 }
 
 void
 UF::BodyParts::Legs::singleMove(uint8_t key)
 {
-    // UF::OS::sendKeyPress(key);
-    // sleep(250);
-    // UF::OS::sendKeyPress(key);
+    // TODO: make sure sendKeyPress emits both key down and key up
+    UF::OS::sendKeyPress(key);
 }

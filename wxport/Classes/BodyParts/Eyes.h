@@ -32,13 +32,13 @@ namespace UF
             void startLooking();
 
         private:
+            void backgroundThreadRun();
+            void backgroundThreadComplete();
+
             void lookForBobber();
             void lookForBobberSpiral();
             bool moveMouseAndCheckCursor(int32_t x, int32_t y);
-            bool imageCompare();
-
-            //void EyeProcess_DoWork();
-            //void EyeProcess_RunWorkerCompleted();
+            bool imageCompare(UF::Image8Bit image0, UF::Image8Bit image1);
 
         private:
             UF::Manager *m_manager;
@@ -46,6 +46,12 @@ namespace UF
             int32_t m_xPosMax;
             int32_t m_yPosMin;
             int32_t m_yPosMax;
+
+            UF::Image8Bit m_fishingCursor;
+
+            std::thread m_backgroundWorker;
+            bool m_running;
+            bool m_found;
         };
 
     }; // namespace BodyParts
