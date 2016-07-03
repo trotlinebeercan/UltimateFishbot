@@ -1,0 +1,53 @@
+CMAKE_MINIMUM_REQUIRED (VERSION 3.0)
+PROJECT (UltimateFishbot)
+
+FILE (GLOB_RECURSE
+    CXX_SOURCE_FILES
+    ${CMAKE_SOURCE_DIR}/*.cpp
+)
+
+INCLUDE_DIRECTORIES (${CMAKE_SOURCE_DIR}/Classes)
+
+IF (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    SET (MACOSX_LIBRARIES
+        "-framework Cocoa"
+        "-framework AppKit"
+        "-framework CoreData"
+        "-framework Foundation"
+    )
+
+    FILE (GLOB_RECURSE
+        OBJC_SOURCE_FILES
+        ${CMAKE_SOURCE_DIR}/*.mm
+    )
+    SET_SOURCE_FILES_PROPERTIES(${OBJC_SOURCE_FILES}
+        PROPERTIES COMPILE_FLAGS "-x objective-c++"
+    )
+ENDIF ()
+
+INCLUDE (CheckCXXCompilerFlag)
+CHECK_CXX_COMPILER_FLAG ("-std=c++11" COMPILER_SUPPORTS_CXX11)
+CHECK_CXX_COMPILER_FLAG ("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
+IF (COMPILER_SUPPORTS_CXX11)
+    SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+ELSEIF (COMPILER_SUPPORTS_CXX0X)
+    SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+ELSE ()
+    MESSAGE (FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support."
+                         "Please use a different C++ compiler.")
+ENDIF ()
+
+ADD_DEFINITIONS ("-fdiagnostics-color=always")
+
+FIND_PACKAGE (wxWidgets REQUIRED)
+INCLUDE (${wxWidgets_USE_FILE})
+
+FIND_PACKAGE (OpenAL REQUIRED)
+
+ADD_EXECUTABLE (${CMAKE_PROJECT_NAME} ${CXX_SOURCE_FILES} ${OBJC_SOURCE_FILES})
+
+TARGET_LINK_LIBRARIES (${CMAKE_PROJECT_NAME}
+    ${OpenAL_LIBRARIES}
+    ${wxWidgets_LIBRARIES}
+    ${MACOSX_LIBRARIES}
+)

@@ -183,3 +183,6 @@ UpgradeLog*.htm
 FakesAssemblies/
 UltimateFishBot/Settings.cs
 UltimateFishBot/UltimateFishBot.idc
+
+# OSX
+.DS_Store
